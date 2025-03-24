@@ -1,24 +1,33 @@
 "use client";
+import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import OverlayModal from "@/components/OverlayModal";
-import styles from "./[category]/page.module.css";
-export default function Home() {
+import OverlayModal from "../../components/OverlayModal";
+import styles from "./page.module.css";
+
+export default function CategoryGallery() {
+  const { category } = useParams();
   const [images, setImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
-  // Fetch and sort images on mount
+  // Fetch images when the category changes
   useEffect(() => {
+    if (!category) return;
+
     async function fetchImages() {
-      const res = await fetch("http://localhost:1337/api/images?populate=*");
+      const res = await fetch(
+        `http://localhost:1337/api/images?populate=*&filters[categories][Title][$eq]=${encodeURIComponent(
+          category
+        )}`
+      );
       const json = await res.json();
 
-      // Sort images by ID (if desired)
+      // Optional: sort by id
       const sortedImages = json.data.sort((a, b) => a.id - b.id);
 
-      // Extract width & height from each image so we can use them for the modal
+      // Map to include original dimensions for intrinsic layout
       const mappedImages = sortedImages.map((item) => {
-        const { width, height } = item.image || {};
+        const { width, height } = item?.image || {};
         return {
           ...item,
           originalWidth: width,
@@ -28,30 +37,25 @@ export default function Home() {
 
       setImages(mappedImages);
     }
-    fetchImages();
-  }, []);
 
-  // Keyboard navigation for modal
+    fetchImages();
+  }, [category]);
+
+  // Optional: Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (selectedImageIndex !== null) {
         if (e.key === "ArrowLeft") {
-          setSelectedImageIndex((prevIndex) =>
-            prevIndex === 0 ? images.length - 1 : prevIndex - 1
-          );
+          showPrev();
         } else if (e.key === "ArrowRight") {
-          setSelectedImageIndex((prevIndex) =>
-            prevIndex === images.length - 1 ? 0 : prevIndex + 1
-          );
-        } else if (e.key === "Escape") {
-          setSelectedImageIndex(null);
+          showNext();
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImageIndex, images.length]);
+  }, [selectedImageIndex, images]);
 
   const openModal = (index) => {
     setSelectedImageIndex(index);
@@ -72,13 +76,13 @@ export default function Home() {
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
   };
-  // The currently selected image
+
   const currentImage =
     selectedImageIndex !== null ? images[selectedImageIndex] : null;
 
   return (
     <div className="container mx-auto p-4">
-      {/* Masonry-like columns */}
+      {/* Masonry layout for images */}
       <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 3xl:columns-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
@@ -89,12 +93,12 @@ export default function Home() {
               : `http://localhost:1337${image.url}`
             : null;
 
-          // Fixed width in the grid; compute height by aspect ratio (if available)
+          // Use a fixed width and compute height based on aspect ratio
           const fixedWidth = 600;
           const dynamicHeight =
             originalWidth && originalHeight
               ? (originalHeight / originalWidth) * fixedWidth
-              : 400; // fallback
+              : 400;
 
           return (
             <div
@@ -104,6 +108,7 @@ export default function Home() {
             >
               {imageUrl ? (
                 <Image
+                  // Only apply the galleryImage class when BW is true
                   className={BW ? styles.galleryImage : ""}
                   src={imageUrl}
                   alt={alt || Title || "Gallery Image"}
@@ -119,6 +124,7 @@ export default function Home() {
         })}
       </div>
 
+      {/* Overlay Modal: Pass navigation callbacks and the current image */}
       <OverlayModal
         isOpen={currentImage !== null}
         onClose={closeModal}

@@ -11,6 +11,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      screens: {
+        "3xl": "2000px", // Custom breakpoint at 2000px
+      },
     },
   },
   plugins: [],
