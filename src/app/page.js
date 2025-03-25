@@ -10,7 +10,7 @@ export default function Home() {
   // Fetch and sort images on mount
   useEffect(() => {
     async function fetchImages() {
-      const res = await fetch("http://localhost:1337/api/images?populate=*");
+      const res = await fetch("http://46.235.8.12/api/images?populate=*");
       const json = await res.json();
 
       // Sort images by ID (if desired)
@@ -86,7 +86,7 @@ export default function Home() {
           const imageUrl = image?.url
             ? image.url.startsWith("http")
               ? image.url
-              : `http://localhost:1337${image.url}`
+              : `http://46.235.8.12${image.url}`
             : null;
 
           // Fixed width in the grid; compute height by aspect ratio (if available)
@@ -131,7 +131,7 @@ export default function Home() {
               src={
                 currentImage.image.url.startsWith("http")
                   ? currentImage.image.url
-                  : `http://localhost:1337${currentImage.image.url}`
+                  : `http://46.235.8.12${currentImage.image.url}`
               }
               alt={currentImage.alt || currentImage.Title || "Gallery Image"}
               layout="intrinsic"

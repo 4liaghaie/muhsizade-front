@@ -7,7 +7,7 @@ const GalleryItem = ({ item }) => {
   const imageUrl = image?.url
     ? image.url.startsWith("http")
       ? image.url
-      : `http://localhost:1337${image.url}`
+      : `http://46.235.8.12/${image.url}`
     : null;
 
   // Optionally, use a fallback if imageUrl is null
