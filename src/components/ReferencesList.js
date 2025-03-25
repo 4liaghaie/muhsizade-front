@@ -11,7 +11,7 @@ export default function ReferencesList({ references }) {
     let url =
       imageData?.image?.formats?.medium?.url || imageData?.image?.url || "";
     if (url && url.startsWith("/")) {
-      url = "http://api.muhsinzade.com" + url;
+      url = "https://api.muhsinzade.com" + url;
     }
     if (!url) {
       // Fallback placeholder if no URL is found.
@@ -27,7 +27,7 @@ export default function ReferencesList({ references }) {
         try {
           const promises = selectedReference.images.map((img) =>
             fetch(
-              `http://api.muhsinzade.com/api/images/${img.documentId}?populate=*`
+              `https://api.muhsinzade.com/api/images/${img.documentId}?populate=*`
             ).then((res) => res.json())
           );
           const results = await Promise.all(promises);
@@ -52,7 +52,7 @@ export default function ReferencesList({ references }) {
           // Build the logo URL (for the reference card) from the logo field.
           let logoUrl = ref.logo?.formats?.medium?.url || ref.logo?.url || "";
           if (logoUrl && logoUrl.startsWith("/")) {
-            logoUrl = "http://api.muhsinzade.com" + logoUrl;
+            logoUrl = "https://api.muhsinzade.com" + logoUrl;
           }
           return (
             <div

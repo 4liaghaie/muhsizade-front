@@ -11,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchImages() {
       const res = await fetch(
-        "http://api.muhsinzade.com/api/images?populate=*"
+        "https://api.muhsinzade.com/api/images?populate=*"
       );
       const json = await res.json();
 
@@ -88,7 +88,7 @@ export default function Home() {
           const imageUrl = image?.url
             ? image.url.startsWith("http")
               ? image.url
-              : `http://api.muhsinzade.com${image.url}`
+              : `https://api.muhsinzade.com${image.url}`
             : null;
 
           // Fixed width in the grid; compute height by aspect ratio (if available)
@@ -133,7 +133,7 @@ export default function Home() {
               src={
                 currentImage.image.url.startsWith("http")
                   ? currentImage.image.url
-                  : `http://api.muhsinzade.com${currentImage.image.url}`
+                  : `https://api.muhsinzade.com${currentImage.image.url}`
               }
               alt={currentImage.alt || currentImage.Title || "Gallery Image"}
               layout="intrinsic"

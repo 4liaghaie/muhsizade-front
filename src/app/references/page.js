@@ -3,7 +3,7 @@ import Image from "next/image";
 
 async function getReferencesData() {
   const res = await fetch(
-    "http://api.muhsinzade.com/api/references?populate=*"
+    "https://api.muhsinzade.com/api/references?populate=*"
   );
   if (!res.ok) {
     throw new Error("Failed to fetch references");
