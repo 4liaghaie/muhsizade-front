@@ -7,7 +7,7 @@ const GalleryItem = ({ item }) => {
   const imageUrl = image?.url
     ? image.url.startsWith("http")
       ? image.url
-      : `http://api.muhsinzade.com:1337/${image.url}`
+      : `http://api.muhsinzade.com/${image.url}`
     : null;
 
   // Optionally, use a fallback if imageUrl is null
