@@ -10,12 +10,12 @@ export default function Navbar({ categories = [] }) {
     async function fetchLogo() {
       try {
         const res = await fetch(
-          "https://muhsinzade.com:1337/api/logo?populate=*"
+          "http://muhsinzade.com:1337/api/logo?populate=*"
         );
         const data = await res.json();
         const logo =
           data?.data?.img?.formats?.medium?.url || data?.data?.img?.url;
-        const baseUrl = "https://muhsinzade.com:1337";
+        const baseUrl = "http://muhsinzade.com:1337";
         setLogoUrl(logo ? baseUrl + logo : "");
       } catch (error) {
         console.error("Error fetching logo:", error);

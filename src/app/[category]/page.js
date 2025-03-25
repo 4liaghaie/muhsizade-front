@@ -16,7 +16,7 @@ export default function CategoryGallery() {
 
     async function fetchImages() {
       const res = await fetch(
-        `https://muhsinzade.com:1337/api/images?populate=*&filters[categories][Title][$eq]=${encodeURIComponent(
+        `http://muhsinzade.com:1337/api/images?populate=*&filters[categories][Title][$eq]=${encodeURIComponent(
           category
         )}`
       );
@@ -90,7 +90,7 @@ export default function CategoryGallery() {
           const imageUrl = image?.url
             ? image.url.startsWith("http")
               ? image.url
-              : `https://muhsinzade.com:1337${image.url}`
+              : `http://muhsinzade.com:1337${image.url}`
             : null;
 
           // Use a fixed width and compute height based on aspect ratio
@@ -137,7 +137,7 @@ export default function CategoryGallery() {
               src={
                 currentImage.image.url.startsWith("http")
                   ? currentImage.image.url
-                  : `https://muhsinzade.com:1337${currentImage.image.url}`
+                  : `http://muhsinzade.com:1337${currentImage.image.url}`
               }
               alt={currentImage.alt || currentImage.Title || "Gallery Image"}
               layout="intrinsic"
