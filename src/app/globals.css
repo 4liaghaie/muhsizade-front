@@ -17,6 +17,11 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Maxima-Nouva-Regular";
+  src: url("/fonts/Maxima-Nouva-Regular.ttf") format("truetype");
   background-color: #fdfdfd;
+}
+h1 {
+  font-family: "Vogun-Mdeium";
+  src: url("/fonts/Vogun-Mdeium.ttf") format("truetype");
 }

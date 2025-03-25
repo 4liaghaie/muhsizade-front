@@ -23,7 +23,9 @@ export default function CategoryGallery() {
       const json = await res.json();
 
       // Optional: sort by id
-      const sortedImages = json.data.sort((a, b) => a.id - b.id);
+      const sortedImages = json.data.sort(
+        (a, b) => (a.position || 0) - (b.position || 0)
+      );
 
       // Map to include original dimensions for intrinsic layout
       const mappedImages = sortedImages.map((item) => {

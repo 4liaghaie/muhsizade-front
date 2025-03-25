@@ -16,7 +16,9 @@ export default function Home() {
       const json = await res.json();
 
       // Sort images by ID (if desired)
-      const sortedImages = json.data.sort((a, b) => a.id - b.id);
+      const sortedImages = json.data.sort(
+        (a, b) => (a.position || 0) - (b.position || 0)
+      );
 
       // Extract width & height from each image so we can use them for the modal
       const mappedImages = sortedImages.map((item) => {
