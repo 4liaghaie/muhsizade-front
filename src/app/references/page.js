@@ -2,7 +2,7 @@ import ReferencesList from "@/components/ReferencesList";
 import Image from "next/image";
 
 async function getReferencesData() {
-  const res = await fetch("http://46.235.8.12/api/references?populate=*");
+  const res = await fetch("http://46.235.8.12:1337/api/references?populate=*");
   if (!res.ok) {
     throw new Error("Failed to fetch references");
   }

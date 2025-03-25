@@ -6,7 +6,7 @@ import styles from "./page.module.css";
 // 1. Async function to fetch the about data
 async function getAboutData() {
   // Replace with your actual endpoint
-  const res = await fetch("http://46.235.8.12/api/about?populate=*");
+  const res = await fetch("http://46.235.8.12:1337/api/about?populate=*");
 
   if (!res.ok) {
     throw new Error("Failed to fetch About data");

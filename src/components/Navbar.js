@@ -9,11 +9,11 @@ export default function Navbar({ categories = [] }) {
   useEffect(() => {
     async function fetchLogo() {
       try {
-        const res = await fetch("http://46.235.8.12/api/logo?populate=*");
+        const res = await fetch("http://46.235.8.12:1337/api/logo?populate=*");
         const data = await res.json();
         const logo =
           data?.data?.img?.formats?.medium?.url || data?.data?.img?.url;
-        const baseUrl = "http://46.235.8.12";
+        const baseUrl = "http://46.235.8.12:1337";
         setLogoUrl(logo ? baseUrl + logo : "");
       } catch (error) {
         console.error("Error fetching logo:", error);
