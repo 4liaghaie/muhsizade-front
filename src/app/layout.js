@@ -22,10 +22,11 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   // Fetch categories from Strapi
   const res = await fetch(
-    "https://api.muhsinzade.com/api/categories?populate=*"
+    "https://api.muhsinzade.com/api/categories?populate=*",
+    { next: { revalidate: 10 } }
   );
   const json = await res.json();
-  const categories = json.data; // Adjust this if your API structure differs
+  const categories = json.data;
 
   return (
     <html lang="en">
