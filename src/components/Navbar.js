@@ -302,12 +302,9 @@ export default function Navbar({ categories = [] }) {
             />
           </svg>
         </button>
+
         <div className="flex flex-col items-center justify-center h-full">
-          <ul className="space-y-8 text-center">{navLinks}</ul>
-          {/* Social Icons inside Mobile Menu */}
-          <div className="flex items-center justify-center space-x-4 mt-8">
-            {socialIcons}
-          </div>
+          <ul className="space-y-6 text-center">{navLinks}</ul>
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleDarkMode}
@@ -350,6 +347,10 @@ export default function Navbar({ categories = [] }) {
               </svg>
             </div>
           </button>
+          {/* Social Icons inside Mobile Menu */}
+          <div className="flex items-center justify-center space-x-4 mt-8">
+            {socialIcons}
+          </div>
         </div>
       </div>
     </nav>
