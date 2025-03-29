@@ -16,10 +16,9 @@ export default function CategoryGallery() {
 
     async function fetchImages() {
       const res = await fetch(
-        `https://api.muhsinzade.com/api/images?populate=*&filters[categories][Title][$eq]=${encodeURIComponent(
-          category
-        )}`
+        `https://api.muhsinzade.com/api/images?populate=*&filters[categories][Title][$eq]=${category}`
       );
+
       const json = await res.json();
 
       // Optional: sort by id
@@ -83,9 +82,11 @@ export default function CategoryGallery() {
     selectedImageIndex !== null ? images[selectedImageIndex] : null;
 
   return (
-    <div className="container mx-auto p-4">
-      {/* Masonry layout for images */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 3xl:columns-5 gap-6">
+    // Use a full-width wrapper instead of a container with max width
+    <div className="w-full p-4">
+      {/* Responsive grid: at 2xl screens and above, show 5 columns.
+          The 1fr columns will automatically expand to fill the available width */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
             item;
@@ -105,12 +106,12 @@ export default function CategoryGallery() {
           return (
             <div
               key={id}
-              className="m-3 mb-10 overflow-hidden shadow-lg cursor-pointer"
+              className="m-3 mb-10 overflow-hidden cursor-pointer"
               onClick={() => openModal(index)}
             >
               {imageUrl ? (
                 <Image
-                  // Only apply the galleryImage class when BW is true
+                  // Apply the galleryImage class conditionally if BW is true
                   className={BW ? styles.galleryImage : ""}
                   src={imageUrl}
                   alt={alt || Title || "Gallery Image"}

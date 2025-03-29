@@ -1,15 +1,39 @@
 .container {
   display: flex;
   flex-direction: column;
-  width: 45vw;
+  width: 90vw;
+  padding-left: 10px;
 }
 
 .stickyImage {
-  /* Pin the image to the right side of the screen */
-  position: fixed;
-  top: 0;
-  right: 0;
+  /* Adjust positioning as needed */
+  margin-left: 10px;
+  margin-top: 40px;
   z-index: -1;
-  width: 40vw;
-  height: 100vh;
+}
+
+/* This wrapper ensures the image is a circle */
+.circleWrapper {
+  position: relative;
+  width: 30vh; /* Ensure width equals height */
+  height: 30vh;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.aboutContainer {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (min-width: 480px) {
+  .container {
+    width: 65vw;
+  }
+  .aboutContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: self-start;
+  }
 }

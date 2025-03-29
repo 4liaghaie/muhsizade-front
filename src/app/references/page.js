@@ -17,8 +17,8 @@ export default async function References() {
   const references = data.data;
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">References</h1>
+    // Add bg-black and text-white to force dark mode on the entire page.
+    <main className="text-white container mx-auto px-4 py-8 min-h-screen">
       <ReferencesList references={references} />
     </main>
   );

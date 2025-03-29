@@ -1,55 +1,141 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
+
+// Helper to build a complete image URL.
+function getImageUrl(imageData) {
+  let url =
+    imageData?.image?.formats?.medium?.url || imageData?.image?.url || "";
+  if (url && url.startsWith("/")) {
+    url = "https://api.muhsinzade.com" + url;
+  }
+  return url || "https://via.placeholder.com/300x200?text=No+Image";
+}
+
+// Refactored modal component with dark/light mode and reference logo.
+function ReferenceModal({ reference, images, isLoading, onClose }) {
+  // Build reference logo URL.
+  let logoUrl =
+    reference.logo?.formats?.medium?.url || reference.logo?.url || "";
+  if (logoUrl && logoUrl.startsWith("/")) {
+    logoUrl = "https://api.muhsinzade.com" + logoUrl;
+  }
+
+  return (
+    <div className="bg-white bg-opacity-70 fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-6 rounded max-w-3xl w-full relative overflow-y-auto max-h-full">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+        >
+          <svg
+            width="24"
+            height="24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        {/* Reference Logo */}
+        {logoUrl && (
+          <div className="flex justify-center mb-4">
+            <div className="relative w-24 h-24">
+              <Image
+                src={logoUrl}
+                alt={reference.title}
+                fill
+                style={{ objectFit: "contain" }}
+                unoptimized
+              />
+            </div>
+          </div>
+        )}
+
+        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 text-center">
+          {reference.title}
+        </h2>
+        {reference.description && (
+          <p className="mb-4  text-center">{reference.description}</p>
+        )}
+
+        {isLoading ? (
+          <p className="text-center">Loading images...</p>
+        ) : images.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {images.map((imgData) => {
+              const imageUrl = getImageUrl(imgData);
+              return (
+                <div key={imgData.id} className="relative w-full h-48">
+                  <Image
+                    src={imageUrl}
+                    alt={
+                      imgData.image?.alt ||
+                      imgData.image?.Title ||
+                      "Reference image"
+                    }
+                    fill
+                    style={{ objectFit: "contain" }}
+                    unoptimized
+                  />
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-center">No images available</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function ReferencesList({ references }) {
   const [selectedReference, setSelectedReference] = useState(null);
   const [fetchedImages, setFetchedImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Helper: Get image URL from the fetched image details.
-  const getImageUrl = (imageData) => {
-    let url =
-      imageData?.image?.formats?.medium?.url || imageData?.image?.url || "";
-    if (url && url.startsWith("/")) {
-      url = "https://api.muhsinzade.com" + url;
-    }
-    if (!url) {
-      // Fallback placeholder if no URL is found.
-      url = "https://via.placeholder.com/300x200?text=No+Image";
-    }
-    return url;
-  };
-
-  // When a reference is selected, fetch details for each image using its documentId.
-  useEffect(() => {
-    if (selectedReference && selectedReference.images?.length) {
-      const fetchImages = async () => {
-        try {
-          const promises = selectedReference.images.map((img) =>
+  // Async handler for when a reference is clicked.
+  const handleReferenceClick = async (ref) => {
+    setSelectedReference(ref);
+    setFetchedImages([]);
+    if (ref.images?.length) {
+      setIsLoading(true);
+      try {
+        const results = await Promise.all(
+          ref.images.map((img) =>
             fetch(
               `https://api.muhsinzade.com/api/images/${img.documentId}?populate=*`
             ).then((res) => res.json())
-          );
-          const results = await Promise.all(promises);
-          // Each result is expected to have a "data" property with the image details.
-          setFetchedImages(results.map((result) => result.data));
-        } catch (error) {
-          console.error("Error fetching image details:", error);
-          setFetchedImages([]);
-        }
-      };
-      fetchImages();
-    } else {
-      setFetchedImages([]);
+          )
+        );
+        setFetchedImages(results.map((result) => result.data));
+      } catch (error) {
+        console.error("Error fetching image details:", error);
+        setFetchedImages([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, [selectedReference]);
+  };
+
+  const closeModal = () => {
+    setSelectedReference(null);
+    setFetchedImages([]);
+  };
 
   return (
-    <>
-      {/* Reference List */}
-      <div className="grid gap-6">
+    <div className="text-white min-h-screen px-4 py-8">
+      {/* Reference Logos Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {references.map((ref) => {
-          // Build the logo URL (for the reference card) from the logo field.
           let logoUrl = ref.logo?.formats?.medium?.url || ref.logo?.url || "";
           if (logoUrl && logoUrl.startsWith("/")) {
             logoUrl = "https://api.muhsinzade.com" + logoUrl;
@@ -57,11 +143,11 @@ export default function ReferencesList({ references }) {
           return (
             <div
               key={ref.id}
-              className="flex items-center space-x-4 border p-4 rounded cursor-pointer hover:shadow-lg"
-              onClick={() => setSelectedReference(ref)}
+              className="flex items-center justify-center cursor-pointer p-4 hover:opacity-80"
+              onClick={() => handleReferenceClick(ref)}
             >
               {logoUrl && (
-                <div className="relative w-16 h-16 flex-shrink-0">
+                <div className="relative w-24 h-24 flex-shrink-0">
                   <Image
                     src={logoUrl}
                     alt={ref.title}
@@ -71,67 +157,20 @@ export default function ReferencesList({ references }) {
                   />
                 </div>
               )}
-              <div>
-                <h2 className="text-xl font-semibold">{ref.title}</h2>
-                <p className="text-gray-700">{ref.description}</p>
-              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Overlay Modal for Selected Reference */}
+      {/* Full-Screen Modal */}
       {selectedReference && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white p-6 rounded max-w-3xl w-full relative overflow-y-auto max-h-full">
-            <button
-              onClick={() => {
-                setSelectedReference(null);
-                setFetchedImages([]);
-              }}
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            >
-              <svg
-                width="24"
-                height="24"
-                xmlns="http://www.w3.org/2000/svg"
-                fillRule="evenodd"
-                clipRule="evenodd"
-              >
-                <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" />
-              </svg>
-            </button>
-            <h2 className="text-2xl font-bold mb-4">
-              {selectedReference.title}
-            </h2>
-            <p className="mb-4">{selectedReference.description}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fetchedImages.length > 0 ? (
-                fetchedImages.map((imgData) => {
-                  const imageUrl = getImageUrl(imgData);
-                  return (
-                    <div key={imgData.id} className="relative w-full h-48">
-                      <Image
-                        src={imageUrl}
-                        alt={
-                          imgData.image?.alt ||
-                          imgData.image?.Title ||
-                          "Reference image"
-                        }
-                        fill
-                        style={{ objectFit: "contain" }}
-                        unoptimized
-                      />
-                    </div>
-                  );
-                })
-              ) : (
-                <p>No images available</p>
-              )}
-            </div>
-          </div>
-        </div>
+        <ReferenceModal
+          reference={selectedReference}
+          images={fetchedImages}
+          isLoading={isLoading}
+          onClose={closeModal}
+        />
       )}
-    </>
+    </div>
   );
 }

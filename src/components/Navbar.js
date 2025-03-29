@@ -5,6 +5,7 @@ import Link from "next/link";
 export default function Navbar({ categories = [] }) {
   const [logoUrl, setLogoUrl] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     async function fetchLogo() {
@@ -24,13 +25,26 @@ export default function Navbar({ categories = [] }) {
     fetchLogo();
   }, []);
 
+  // Update the root element to have the "dark" class when darkMode is enabled
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   // Consolidated navigation links used in both desktop and mobile menus.
   const navLinks = (
     <>
       <li>
         <Link
           href="/"
-          className="text-black hover:text-gray-300"
+          className=" hover:text-gray-300"
           onClick={() => setIsMenuOpen(false)}
         >
           Home
@@ -41,7 +55,7 @@ export default function Navbar({ categories = [] }) {
           <li key={cat.id}>
             <Link
               href={`/${cat.Title}`}
-              className="text-black hover:text-gray-300"
+              className=" hover:text-gray-300"
               onClick={() => setIsMenuOpen(false)}
             >
               {cat.Title}
@@ -54,7 +68,7 @@ export default function Navbar({ categories = [] }) {
       <li>
         <Link
           href="/references"
-          className="text-black hover:text-gray-300"
+          className=" hover:text-gray-300"
           onClick={() => setIsMenuOpen(false)}
         >
           References
@@ -63,7 +77,7 @@ export default function Navbar({ categories = [] }) {
       <li>
         <Link
           href="/about"
-          className="text-black hover:text-gray-300"
+          className=" hover:text-gray-300"
           onClick={() => setIsMenuOpen(false)}
         >
           About
@@ -72,7 +86,7 @@ export default function Navbar({ categories = [] }) {
       <li>
         <Link
           href="/contact"
-          className="text-black hover:text-gray-300"
+          className=" hover:text-gray-300"
           onClick={() => setIsMenuOpen(false)}
         >
           Contact
@@ -85,13 +99,12 @@ export default function Navbar({ categories = [] }) {
   const socialIcons = (
     <>
       <Link
-        href="https://instagram.com"
+        href="https://www.instagram.com/sait_mosallat/?utm_source=ig_web_button_share_sheet"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {/* Updated Instagram icon */}
         <svg
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           fill="currentColor"
           viewBox="0 0 448 512"
         >
@@ -99,12 +112,12 @@ export default function Navbar({ categories = [] }) {
         </svg>
       </Link>
       <Link
-        href="https://facebook.com"
+        href="https://www.facebook.com/saeed.mosallat"
         target="_blank"
         rel="noopener noreferrer"
       >
         <svg
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6  hover:text-gray-500"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
@@ -112,12 +125,12 @@ export default function Navbar({ categories = [] }) {
         </svg>
       </Link>
       <Link
-        href="https://linkedin.com"
+        href="https://www.linkedin.com/in/saeed-muhsinzade-569104177/"
         target="_blank"
         rel="noopener noreferrer"
       >
         <svg
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           fill="currentColor"
           viewBox="0 0 448 512"
         >
@@ -125,14 +138,13 @@ export default function Navbar({ categories = [] }) {
         </svg>
       </Link>
       <Link
-        href="https://behance.net"
+        href="https://www.behance.net/mosallatsa6cf7"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {/* Provided Behance icon with fill="currentColor" */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           viewBox="0 0 24 24"
           fill="currentColor"
         >
@@ -150,7 +162,11 @@ export default function Navbar({ categories = [] }) {
         <div className="flex justify-start">
           {logoUrl ? (
             <Link href="/">
-              <img src={logoUrl} alt="Saeed Mosallat" className="h-12 w-auto" />
+              <img
+                src={logoUrl}
+                alt="Saeed Muhsinzade"
+                className="h-12 w-auto"
+              />
             </Link>
           ) : (
             <div className="h-10 w-10 bg-gray-300" />
@@ -158,11 +174,53 @@ export default function Navbar({ categories = [] }) {
         </div>
         {/* Center Column: Site Name */}
         <div className="flex justify-center">
-          <h1 className="text-4xl">Saeed Mosallat</h1>
+          <h1 className="text-4xl">Sait Muhsinzade</h1>
         </div>
-        {/* Right Column: Social Icons */}
-        <div className="flex justify-end">
+        {/* Right Column: Social Icons and Dark Mode Toggle */}
+        <div className="flex justify-end items-center space-x-4">
           <div className="flex space-x-4">{socialIcons}</div>
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            className="relative p-2 rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-500"
+          >
+            <div className="relative w-6 h-6">
+              {/* Sun Icon (appears when dark mode is active) */}
+              <svg
+                className={`absolute inset-0 transition-all duration-500 transform ${
+                  darkMode ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3v1m0 16v1m8.485-8.485h1M3.515 12h-1m15.364-6.364l.707.707M5.636 18.364l-.707.707M18.364 18.364l.707-.707M5.636 5.636l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
+                />
+              </svg>
+              {/* Moon Icon (appears when light mode is active) */}
+              <svg
+                className={`absolute inset-0 transition-all duration-500 transform ${
+                  darkMode ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                />
+              </svg>
+            </div>
+          </button>
         </div>
       </div>
 
@@ -172,7 +230,7 @@ export default function Navbar({ categories = [] }) {
         <div className="flex items-center">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-black"
+            className="text-black dark:text-white"
           >
             <svg
               className="h-6 w-6"
@@ -200,7 +258,7 @@ export default function Navbar({ categories = [] }) {
         </div>
         {/* Center: Site Name */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <h1 className="text-xl md:text-4xl">Saeed Mosallat</h1>
+          <h1 className="text-xl md:text-4xl">Sait Muhsinzade</h1>
         </div>
         {/* Right: Logo */}
         <div className="flex items-center">
@@ -215,20 +273,20 @@ export default function Navbar({ categories = [] }) {
       </div>
 
       {/* Desktop Navigation Links */}
-      <ul className="hidden md:flex justify-center mt-4 space-x-4">
+      <ul className="hidden md:flex justify-center align-center mt-4 space-x-4">
         {navLinks}
       </ul>
 
       {/* Mobile Full-Screen Menu with Transition */}
       <div
-        className={`md:hidden fixed inset-0 bg-white bg-opacity-90 z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed inset-0 bg-white dark:bg-black bg-opacity-90 z-40 transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         {/* Close Button */}
         <button
           onClick={() => setIsMenuOpen(false)}
-          className="absolute top-4 right-4 text-black"
+          className="absolute top-4 right-4 text-black dark:text-white"
         >
           <svg
             className="h-6 w-6"
@@ -245,11 +303,53 @@ export default function Navbar({ categories = [] }) {
           </svg>
         </button>
         <div className="flex flex-col items-center justify-center h-full">
-          <ul className="space-y-8">{navLinks}</ul>
+          <ul className="space-y-8 text-center">{navLinks}</ul>
           {/* Social Icons inside Mobile Menu */}
           <div className="flex items-center justify-center space-x-4 mt-8">
             {socialIcons}
           </div>
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            className="mt-8 p-2 rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-500"
+          >
+            <div className="relative w-6 h-6">
+              {/* Sun Icon (visible when dark mode is active) */}
+              <svg
+                className={`absolute inset-0 transition-all duration-500 transform ${
+                  darkMode ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3v1m0 16v1m8.485-8.485h1M3.515 12h-1m15.364-6.364l.707.707M5.636 18.364l-.707.707M18.364 18.364l.707-.707M5.636 5.636l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
+                />
+              </svg>
+              {/* Moon Icon (visible when light mode is active) */}
+              <svg
+                className={`absolute inset-0 transition-all duration-500 transform ${
+                  darkMode ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                />
+              </svg>
+            </div>
+          </button>
         </div>
       </div>
     </nav>

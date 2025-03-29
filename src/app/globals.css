@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdfdfd;
+  --foreground: #1f1f1f;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* When dark mode is enabled (i.e. when the html element has the "dark" class),
+   override the CSS variables */
+html.dark {
+  --background: #1a1a1a;
+  --foreground: #f1f1f1;
 }
 
 body {
-  color: var(--foreground);
   background: var(--background);
-  font-family: "Maxima-Nouva-Regular";
+  color: var(--foreground);
+  font-family: "Maxima-Nouva";
   src: url("/fonts/Maxima-Nouva-Regular.ttf") format("truetype");
-  background-color: #fdfdfd;
 }
+
 h1 {
   font-family: "Vogun-Mdeium";
-  src: url("/fonts/Vogun-Mdeium.ttf") format("truetype");
+  src: url("/fonts/Vogun-Medium.ttf") format("truetype");
 }

@@ -81,9 +81,10 @@ export default function Home() {
     selectedImageIndex !== null ? images[selectedImageIndex] : null;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="w-full p-4">
+      {" "}
       {/* Masonry-like columns */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 3xl:columns-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
             item;
@@ -103,7 +104,7 @@ export default function Home() {
           return (
             <div
               key={id}
-              className="m-3 mb-10 overflow-hidden shadow-lg cursor-pointer"
+              className="m-3 mb-10 overflow-hidden cursor-pointer"
               onClick={() => openModal(index)}
             >
               {imageUrl ? (
@@ -122,7 +123,6 @@ export default function Home() {
           );
         })}
       </div>
-
       <OverlayModal
         isOpen={currentImage !== null}
         onClose={closeModal}

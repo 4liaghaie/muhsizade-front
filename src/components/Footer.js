@@ -5,13 +5,13 @@ export default function Footer() {
   const socialIcons = (
     <>
       <Link
-        href="https://instagram.com"
+        href="https://www.instagram.com/sait_mosallat/?utm_source=ig_web_button_share_sheet"
         target="_blank"
         rel="noopener noreferrer"
       >
         {/* Instagram icon */}
         <svg
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           fill="currentColor"
           viewBox="0 0 448 512"
         >
@@ -19,13 +19,13 @@ export default function Footer() {
         </svg>
       </Link>
       <Link
-        href="https://facebook.com"
+        href="https://www.facebook.com/saeed.mosallat"
         target="_blank"
         rel="noopener noreferrer"
       >
         {/* Facebook icon */}
         <svg
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
@@ -33,13 +33,13 @@ export default function Footer() {
         </svg>
       </Link>
       <Link
-        href="https://linkedin.com"
+        href="https://www.linkedin.com/in/saeed-muhsinzade-569104177/"
         target="_blank"
         rel="noopener noreferrer"
       >
         {/* LinkedIn icon */}
         <svg
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           fill="currentColor"
           viewBox="0 0 448 512"
         >
@@ -47,14 +47,14 @@ export default function Footer() {
         </svg>
       </Link>
       <Link
-        href="https://behance.net"
+        href="https://www.behance.net/mosallatsa6cf7"
         target="_blank"
         rel="noopener noreferrer"
       >
         {/* Provided Behance icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-black hover:text-gray-500"
+          className="h-6 w-6 hover:text-gray-500"
           viewBox="0 0 24 24"
           fill="currentColor"
         >
@@ -65,11 +65,12 @@ export default function Footer() {
   );
 
   return (
-    <footer className="p-4 border-t border-gray-200 mt-8">
+    <footer className="p-4 border-t border-gray-200 dark:border-gray-800 mt-8">
       <div className="container mx-auto flex flex-col items-center justify-center">
         <div className="flex space-x-4 mb-2">{socialIcons}</div>
-        <p className="text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} Saeed Mosallat. All rights reserved.
+        <p className="text-sm text-gray-500 dark:text-gray-300">
+          &copy; {new Date().getFullYear()} Saeed Muhsinzade. All rights
+          reserved.
         </p>
       </div>
     </footer>
