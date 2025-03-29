@@ -3,24 +3,30 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import OverlayModal from "@/components/OverlayModal";
 import styles from "./[category]/page.module.css";
+
 export default function Home() {
   const [images, setImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const pageSize = 25; // adjust if needed
 
-  // Fetch and sort images on mount
-  useEffect(() => {
-    async function fetchImages() {
+  // Function to fetch images for a given page
+  async function fetchImages(pageNumber) {
+    setIsFetching(true);
+    try {
       const res = await fetch(
-        "https://api.muhsinzade.com/api/images?populate=*"
+        `https://api.muhsinzade.com/api/images?populate=*&pagination[page]=${pageNumber}&pagination[pageSize]=${pageSize}`
       );
       const json = await res.json();
 
-      // Sort images by ID (if desired)
+      // Sort images by position (or id)
       const sortedImages = json.data.sort(
         (a, b) => (a.position || 0) - (b.position || 0)
       );
 
-      // Extract width & height from each image so we can use them for the modal
+      // Map to include intrinsic dimensions
       const mappedImages = sortedImages.map((item) => {
         const { width, height } = item.image || {};
         return {
@@ -30,10 +36,39 @@ export default function Home() {
         };
       });
 
-      setImages(mappedImages);
+      // If fewer images than pageSize are returned, we've reached the end.
+      if (sortedImages.length < pageSize) {
+        setHasMore(false);
+      }
+
+      // Append new images to the existing array
+      setImages((prev) => [...prev, ...mappedImages]);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    } finally {
+      setIsFetching(false);
     }
-    fetchImages();
-  }, []);
+  }
+
+  // Initial load and load on page change
+  useEffect(() => {
+    fetchImages(page);
+  }, [page]);
+
+  // Auto scroll: load next page when near bottom of the page.
+  useEffect(() => {
+    function handleScroll() {
+      if (isFetching || !hasMore) return;
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.offsetHeight - 100
+      ) {
+        setPage((prev) => prev + 1);
+      }
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isFetching, hasMore]);
 
   // Keyboard navigation for modal
   useEffect(() => {
@@ -76,14 +111,13 @@ export default function Home() {
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
   };
-  // The currently selected image
+
   const currentImage =
     selectedImageIndex !== null ? images[selectedImageIndex] : null;
 
   return (
     <div className="w-full p-4">
-      {" "}
-      {/* Masonry-like columns */}
+      {/* Responsive grid that expands to fill the screen */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
@@ -94,12 +128,12 @@ export default function Home() {
               : `https://api.muhsinzade.com${image.url}`
             : null;
 
-          // Fixed width in the grid; compute height by aspect ratio (if available)
+          // Fixed width for grid items; compute dynamic height based on aspect ratio
           const fixedWidth = 600;
           const dynamicHeight =
             originalWidth && originalHeight
               ? (originalHeight / originalWidth) * fixedWidth
-              : 400; // fallback
+              : 400;
 
           return (
             <div
@@ -123,6 +157,14 @@ export default function Home() {
           );
         })}
       </div>
+
+      {/* Loading spinner */}
+      {isFetching && (
+        <div className="flex justify-center my-8">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
       <OverlayModal
         isOpen={currentImage !== null}
         onClose={closeModal}

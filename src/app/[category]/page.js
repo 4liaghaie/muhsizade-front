@@ -9,26 +9,38 @@ export default function CategoryGallery() {
   const { category } = useParams();
   const [images, setImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const pageSize = 25; // adjust if needed
 
-  // Fetch images when the category changes
+  // When the category changes, reset state and load the first page
   useEffect(() => {
     if (!category) return;
+    setImages([]);
+    setPage(1);
+    setHasMore(true);
+    fetchImages(1);
+  }, [category]);
 
-    async function fetchImages() {
+  // Fetch images for a given page and append them to our list
+  async function fetchImages(pageNumber) {
+    if (!category) return;
+    setIsFetching(true);
+    try {
       const res = await fetch(
-        `https://api.muhsinzade.com/api/images?populate=*&filters[categories][Title][$eq]=${category}`
+        `https://api.muhsinzade.com/api/images?populate=*&filters[categories][Title][$eq]=${category}&pagination[page]=${pageNumber}&pagination[pageSize]=${pageSize}`
       );
-
       const json = await res.json();
 
-      // Optional: sort by id
+      // Sort images by position (or ID)
       const sortedImages = json.data.sort(
         (a, b) => (a.position || 0) - (b.position || 0)
       );
 
-      // Map to include original dimensions for intrinsic layout
+      // Map images to include intrinsic dimensions
       const mappedImages = sortedImages.map((item) => {
-        const { width, height } = item?.image || {};
+        const { width, height } = item.image || {};
         return {
           ...item,
           originalWidth: width,
@@ -36,27 +48,58 @@ export default function CategoryGallery() {
         };
       });
 
-      setImages(mappedImages);
+      // If fewer images than pageSize are returned, there are no more pages
+      if (sortedImages.length < pageSize) {
+        setHasMore(false);
+      }
+
+      // Append new images
+      setImages((prev) => [...prev, ...mappedImages]);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    } finally {
+      setIsFetching(false);
     }
+  }
 
-    fetchImages();
-  }, [category]);
+  // Auto scroll: load next page when near bottom of the page
+  useEffect(() => {
+    function handleScroll() {
+      if (isFetching || !hasMore) return;
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.offsetHeight - 100
+      ) {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchImages(nextPage);
+      }
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isFetching, hasMore, page, category]);
 
-  // Optional: Keyboard navigation
+  // Keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (selectedImageIndex !== null) {
         if (e.key === "ArrowLeft") {
-          showPrev();
+          setSelectedImageIndex((prevIndex) =>
+            prevIndex === 0 ? images.length - 1 : prevIndex - 1
+          );
         } else if (e.key === "ArrowRight") {
-          showNext();
+          setSelectedImageIndex((prevIndex) =>
+            prevIndex === images.length - 1 ? 0 : prevIndex + 1
+          );
+        } else if (e.key === "Escape") {
+          setSelectedImageIndex(null);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImageIndex, images]);
+  }, [selectedImageIndex, images.length]);
 
   const openModal = (index) => {
     setSelectedImageIndex(index);
@@ -82,11 +125,9 @@ export default function CategoryGallery() {
     selectedImageIndex !== null ? images[selectedImageIndex] : null;
 
   return (
-    // Use a full-width wrapper instead of a container with max width
     <div className="w-full p-4">
-      {/* Responsive grid: at 2xl screens and above, show 5 columns.
-          The 1fr columns will automatically expand to fill the available width */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+      {/* Responsive grid: from 1 column on small screens up to 5 columns on 2xl+ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
             item;
@@ -96,7 +137,7 @@ export default function CategoryGallery() {
               : `https://api.muhsinzade.com${image.url}`
             : null;
 
-          // Use a fixed width and compute height based on aspect ratio
+          // Use a fixed width and compute dynamic height based on aspect ratio
           const fixedWidth = 600;
           const dynamicHeight =
             originalWidth && originalHeight
@@ -111,7 +152,6 @@ export default function CategoryGallery() {
             >
               {imageUrl ? (
                 <Image
-                  // Apply the galleryImage class conditionally if BW is true
                   className={BW ? styles.galleryImage : ""}
                   src={imageUrl}
                   alt={alt || Title || "Gallery Image"}
@@ -127,7 +167,14 @@ export default function CategoryGallery() {
         })}
       </div>
 
-      {/* Overlay Modal: Pass navigation callbacks and the current image */}
+      {/* Loading spinner when fetching new pages */}
+      {isFetching && (
+        <div className="flex justify-center my-8">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
+      {/* Overlay Modal for image details */}
       <OverlayModal
         isOpen={currentImage !== null}
         onClose={closeModal}
