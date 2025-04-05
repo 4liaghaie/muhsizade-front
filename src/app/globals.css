@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,11 +19,19 @@ html.dark {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Maxima-Nouva";
-  src: url("/fonts/Maxima-Nouva-Regular.ttf") format("truetype");
+  font-family: 'Poppins', sans-serif; /* Apply Poppins globally */
+
 }
 
+/* Define the Vogun font using @font-face */
+@font-face {
+  font-family: 'Vogun-Medium';
+  src: url('/fonts/Vogun-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Apply Vogun font to h1 */
 h1 {
-  font-family: "Vogun-Mdeium";
-  src: url("/fonts/Vogun-Medium.ttf") format("truetype");
+  font-family: 'Vogun-Medium', sans-serif; /* Apply Vogun-Medium font */
 }

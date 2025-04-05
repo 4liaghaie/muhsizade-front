@@ -132,35 +132,38 @@ export default function ReferencesList({ references }) {
   };
 
   return (
-    <div className="text-white min-h-screen px-4 py-8">
+    <div className="text-white min-h-screen px-8 lg:px-60 py-8">
       {/* Reference Logos Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {references.map((ref) => {
-          let logoUrl = ref.logo?.formats?.medium?.url || ref.logo?.url || "";
-          if (logoUrl && logoUrl.startsWith("/")) {
-            logoUrl = "https://api.muhsinzade.com" + logoUrl;
-          }
-          return (
-            <div
-              key={ref.id}
-              className="flex items-center justify-center cursor-pointer p-4 hover:opacity-80"
-              onClick={() => handleReferenceClick(ref)}
-            >
-              {logoUrl && (
-                <div className="relative w-24 h-24 flex-shrink-0">
-                  <Image
-                    src={logoUrl}
-                    alt={ref.title}
-                    fill
-                    style={{ objectFit: "contain" }}
-                    unoptimized
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
+  {references.map((ref) => {
+    let logoUrl = ref.logo?.formats?.medium?.url || ref.logo?.url || "";
+    if (logoUrl && logoUrl.startsWith("/")) {
+      logoUrl = "https://api.muhsinzade.com" + logoUrl;
+    }
+    return (
+      <div
+        key={ref.id}
+        className="flex items-center justify-center cursor-pointer hover:opacity-80"
+        style={{ marginBottom: '-70px' }} // Apply negative margin to rows
+        onClick={() => handleReferenceClick(ref)}
+      >
+        {logoUrl && (
+          <div className="relative w-40 h-40 flex-shrink-0">
+            <Image
+              src={logoUrl}
+              alt={ref.title}
+              fill
+              style={{ objectFit: "contain" }}
+              unoptimized
+            />
+          </div>
+        )}
       </div>
+    );
+  })}
+</div>
+
+
 
       {/* Full-Screen Modal */}
       {selectedReference && (
