@@ -118,7 +118,7 @@ export default function Home() {
   return (
     <div className="w-full p-4">
       {/* Responsive grid that expands to fill the screen */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
             item;

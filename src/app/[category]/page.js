@@ -127,7 +127,7 @@ export default function CategoryGallery() {
   return (
     <div className="w-full p-4">
       {/* Responsive grid: from 1 column on small screens up to 5 columns on 2xl+ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
           const { id, Title, alt, image, originalWidth, originalHeight, BW } =
             item;
