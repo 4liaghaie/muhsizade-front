@@ -155,7 +155,7 @@ export default function Navbar({ categories = [] }) {
   );
 
   return (
-    <nav className="navbar sticky top-0 z-50">
+    <nav className="navbar sticky top-0 z-50 p-4">
       {/* Desktop Top Bar using a 3-column grid for proper centering */}
       <div className="hidden md:grid grid-cols-3 items-center">
         {/* Left Column: Logo */}
