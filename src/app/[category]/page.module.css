@@ -35,8 +35,18 @@
 }
 .galleryImage {
   filter: grayscale(100%);
-  transition: filter 0.5s ease; /* Smooth transition */
+  transition: filter 0.5s ease, transform 0.5s ease;
 }
+
 .galleryImage:hover {
   filter: grayscale(0%);
+  transform: scale(1.1);
+}
+
+.imageHover {
+  transition: transform 0.4s ease;
+}
+
+.imageHover:hover {
+  transform: scale(1.02);
 }

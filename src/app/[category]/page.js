@@ -152,7 +152,7 @@ export default function CategoryGallery() {
             >
               {imageUrl ? (
                 <Image
-                  className={BW ? styles.galleryImage : ""}
+                  className={BW ? styles.galleryImage : styles.imageHover}
                   src={imageUrl}
                   alt={alt || Title || "Gallery Image"}
                   width={fixedWidth}
