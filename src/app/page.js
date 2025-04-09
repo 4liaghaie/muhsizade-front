@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import OverlayModal from "@/components/OverlayModal";
 import styles from "./[category]/page.module.css";
 
@@ -120,8 +121,7 @@ export default function Home() {
       {/* Responsive grid that expands to fill the screen */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {images.map((item, index) => {
-          const { id, Title, alt, image, originalWidth, originalHeight, BW } =
-            item;
+          const { id, Title, alt, image, originalWidth, originalHeight, BW } = item;
           const imageUrl = image?.url
             ? image.url.startsWith("http")
               ? image.url
@@ -135,11 +135,18 @@ export default function Home() {
               ? (originalHeight / originalWidth) * fixedWidth
               : 400;
 
+          // Generate a random offset so the image "shuffles" in from a random direction
+          const randomX = Math.floor(Math.random() * 200 - 100);
+          const randomY = Math.floor(Math.random() * 200 - 100);
+
           return (
-            <div
+            <motion.div
               key={id}
               className="m-3 mb-10 overflow-hidden cursor-pointer"
               onClick={() => openModal(index)}
+              initial={{ opacity: 0, x: randomX, y: randomY }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.05 }}
             >
               {imageUrl ? (
                 <Image
@@ -153,7 +160,7 @@ export default function Home() {
               ) : (
                 <div className="p-4">No image available</div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>

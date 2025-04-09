@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import OverlayModal from "../../components/OverlayModal";
 import styles from "./page.module.css";
+import { motion } from "framer-motion";
 
 export default function CategoryGallery() {
   const { category } = useParams();
@@ -105,6 +106,7 @@ export default function CategoryGallery() {
     setSelectedImageIndex(index);
   };
 
+
   const closeModal = () => {
     setSelectedImageIndex(null);
   };
@@ -143,12 +145,17 @@ export default function CategoryGallery() {
             originalWidth && originalHeight
               ? (originalHeight / originalWidth) * fixedWidth
               : 400;
+              const randomX = Math.floor(Math.random() * 200 - 100);
+              const randomY = Math.floor(Math.random() * 200 - 100);
 
           return (
-            <div
-              key={id}
-              className="m-3 mb-10 overflow-hidden cursor-pointer"
-              onClick={() => openModal(index)}
+            <motion.div
+            key={id}
+            className="m-3 mb-10 overflow-hidden cursor-pointer"
+            onClick={() => openModal(index)}
+            initial={{ opacity: 0, x: randomX, y: randomY }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.05 }}
             >
               {imageUrl ? (
                 <Image
@@ -162,7 +169,7 @@ export default function CategoryGallery() {
               ) : (
                 <div className="p-4">No image available</div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>

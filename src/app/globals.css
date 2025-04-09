@@ -7,6 +7,7 @@
 :root {
   --background: #fdfdfd;
   --foreground: #1f1f1f;
+  overflow-x: hidden;
 }
 
 /* When dark mode is enabled (i.e. when the html element has the "dark" class),
