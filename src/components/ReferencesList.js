@@ -1,25 +1,19 @@
 "use client";
-import { useState } from "react";
+
+import React, { useState } from "react";
 import Image from "next/image";
 
 // Helper to build a complete image URL.
-function getImageUrl(imageData) {
-  let url =
-    imageData?.image?.formats?.medium?.url || imageData?.image?.url || "";
-  if (url && url.startsWith("/")) {
-    url = "https://api.muhsinzade.com" + url;
-  }
-  return url || "https://via.placeholder.com/300x200?text=No+Image";
+function buildUrl(imageData) {
+  const path = imageData?.formats?.medium?.url || imageData?.url;
+  if (!path) return null;
+  return path.startsWith("/") ? "https://api.muhsinzade.com" + path : path;
 }
 
-// Refactored modal component with dark/light mode and reference logo.
+// Modal component for image gallery
 function ReferenceModal({ reference, images, isLoading, onClose }) {
-  // Build reference logo URL.
-  let logoUrl =
-    reference.logo?.formats?.medium?.url || reference.logo?.url || "";
-  if (logoUrl && logoUrl.startsWith("/")) {
-    logoUrl = "https://api.muhsinzade.com" + logoUrl;
-  }
+  const lightLogoUrl = buildUrl(reference.logo_light);
+  const darkLogoUrl = buildUrl(reference.logo_dark);
 
   return (
     <div className="bg-white bg-opacity-70 fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -44,26 +38,40 @@ function ReferenceModal({ reference, images, isLoading, onClose }) {
           </svg>
         </button>
 
-        {/* Reference Logo */}
-        {logoUrl && (
-          <div className="flex justify-center mb-4">
-            <div className="relative w-24 h-24">
+        {/* Logo: light/dark swap via CSS */}
+        <div className="flex justify-center mb-4">
+          <div className="relative w-24 h-24">
+            {lightLogoUrl && (
               <Image
-                src={logoUrl}
-                alt={reference.title}
+                src={lightLogoUrl}
+                alt={`${reference.title} logo`}
                 fill
                 style={{ objectFit: "contain" }}
+                className="block dark:hidden"
                 unoptimized
               />
-            </div>
+            )}
+            {darkLogoUrl && (
+              <Image
+                src={darkLogoUrl}
+                alt={`${reference.title} logo dark`}
+                fill
+                style={{ objectFit: "contain" }}
+                className="hidden dark:block absolute inset-0"
+                unoptimized
+              />
+            )}
           </div>
-        )}
+        </div>
 
         <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 text-center">
           {reference.title}
         </h2>
+
         {reference.description && (
-          <p className="mb-4  text-center">{reference.description}</p>
+          <p className="mb-4 text-center text-gray-700 dark:text-gray-300">
+            {reference.description}
+          </p>
         )}
 
         {isLoading ? (
@@ -71,20 +79,18 @@ function ReferenceModal({ reference, images, isLoading, onClose }) {
         ) : images.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {images.map((imgData) => {
-              const imageUrl = getImageUrl(imgData);
+              const url = buildUrl(imgData.image);
               return (
                 <div key={imgData.id} className="relative w-full h-48">
-                  <Image
-                    src={imageUrl}
-                    alt={
-                      imgData.image?.alt ||
-                      imgData.image?.Title ||
-                      "Reference image"
-                    }
-                    fill
-                    style={{ objectFit: "contain" }}
-                    unoptimized
-                  />
+                  {url && (
+                    <Image
+                      src={url}
+                      alt={imgData.image?.alt || "Reference image"}
+                      fill
+                      style={{ objectFit: "contain" }}
+                      unoptimized
+                    />
+                  )}
                 </div>
               );
             })}
@@ -98,79 +104,80 @@ function ReferenceModal({ reference, images, isLoading, onClose }) {
 }
 
 export default function ReferencesList({ references }) {
-  const [selectedReference, setSelectedReference] = useState(null);
-  const [fetchedImages, setFetchedImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Async handler for when a reference is clicked.
-  const handleReferenceClick = async (ref) => {
-    setSelectedReference(ref);
-    setFetchedImages([]);
+  const handleClick = async (ref) => {
+    setSelected(ref);
     if (ref.images?.length) {
-      setIsLoading(true);
+      setLoading(true);
       try {
-        const results = await Promise.all(
+        const res = await Promise.all(
           ref.images.map((img) =>
             fetch(
               `https://api.muhsinzade.com/api/images/${img.documentId}?populate=*`
-            ).then((res) => res.json())
+            ).then((r) => r.json())
           )
         );
-        setFetchedImages(results.map((result) => result.data));
-      } catch (error) {
-        console.error("Error fetching image details:", error);
-        setFetchedImages([]);
+        setImages(res.map((r) => r.data));
+      } catch {
+        setImages([]);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
+    } else {
+      setImages([]);
     }
   };
 
-  const closeModal = () => {
-    setSelectedReference(null);
-    setFetchedImages([]);
-  };
+  const closeModal = () => setSelected(null);
 
   return (
     <div className="text-white min-h-screen px-8 lg:px-60 py-8">
-      {/* Reference Logos Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-  {references.map((ref) => {
-    let logoUrl = ref.logo?.formats?.medium?.url || ref.logo?.url || "";
-    if (logoUrl && logoUrl.startsWith("/")) {
-      logoUrl = "https://api.muhsinzade.com" + logoUrl;
-    }
-    return (
-      <div
-        key={ref.id}
-        className="flex items-center justify-center cursor-pointer hover:opacity-80"
-        style={{ marginBottom: '-70px' }} // Apply negative margin to rows
-        onClick={() => handleReferenceClick(ref)}
-      >
-        {logoUrl && (
-          <div className="relative w-40 h-40 flex-shrink-0">
-            <Image
-              src={logoUrl}
-              alt={ref.title}
-              fill
-              style={{ objectFit: "contain" }}
-              unoptimized
-            />
-          </div>
-        )}
+        {references.map((ref) => {
+          const lightUrl = buildUrl(ref.logo_light);
+          const darkUrl = buildUrl(ref.logo_dark);
+
+          return (
+            <div
+              key={ref.id}
+              className="flex items-center justify-center cursor-pointer hover:opacity-80"
+              onClick={() => handleClick(ref)}
+            >
+              <div className="relative w-40 h-40 flex-shrink-0">
+                {lightUrl && (
+                  <Image
+                    src={lightUrl}
+                    alt={`${ref.title} logo`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    className="block dark:hidden"
+                    unoptimized
+                  />
+                )}
+                {darkUrl && (
+                  <Image
+                    src={darkUrl}
+                    alt={`${ref.title} logo dark`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    className="hidden dark:block absolute inset-0"
+                    unoptimized
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
-    );
-  })}
-</div>
 
-
-
-      {/* Full-Screen Modal */}
-      {selectedReference && (
+      {selected && (
         <ReferenceModal
-          reference={selectedReference}
-          images={fetchedImages}
-          isLoading={isLoading}
+          reference={selected}
+          images={images}
+          isLoading={loading}
           onClose={closeModal}
         />
       )}

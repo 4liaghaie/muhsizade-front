@@ -106,7 +106,6 @@ export default function CategoryGallery() {
     setSelectedImageIndex(index);
   };
 
-
   const closeModal = () => {
     setSelectedImageIndex(null);
   };
@@ -145,17 +144,22 @@ export default function CategoryGallery() {
             originalWidth && originalHeight
               ? (originalHeight / originalWidth) * fixedWidth
               : 400;
-              const randomX = Math.floor(Math.random() * 200 - 100);
-              const randomY = Math.floor(Math.random() * 200 - 100);
+          const randomX = Math.floor(Math.random() * 200 - 100);
+          const randomY = Math.floor(Math.random() * 200 - 100);
 
           return (
             <motion.div
-            key={id}
-            className="m-3 mb-10 overflow-hidden cursor-pointer"
-            onClick={() => openModal(index)}
-            initial={{ opacity: 0, x: randomX, y: randomY }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.05 }}
+              key={id}
+              className="m-3 mb-10 overflow-hidden cursor-pointer"
+              onClick={() => openModal(index)}
+              initial={{ opacity: 0, x: randomX, y: randomY }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 100,
+                damping: 20,
+                delay: index * 0.05,
+              }}
             >
               {imageUrl ? (
                 <Image
@@ -205,9 +209,6 @@ export default function CategoryGallery() {
                 width: "auto",
               }}
             />
-            <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white text-center p-2">
-              {currentImage.Title}
-            </div>
           </div>
         )}
       </OverlayModal>

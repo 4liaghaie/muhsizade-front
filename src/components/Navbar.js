@@ -50,18 +50,30 @@ export default function Navbar({ categories = [] }) {
           Home
         </Link>
       </li>
-      {categories.length > 0 ? (
-        categories.map((cat) => (
-          <li key={cat.id}>
-            <Link
-              href={`/${cat.Title}`}
-              className=" hover:text-gray-300"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {cat.Title}
-            </Link>
-          </li>
-        ))
+      <li>
+        <Link
+          href="/about"
+          className=" hover:text-gray-300"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          About
+        </Link>
+      </li>
+      {categories?.length + 1 ? (
+        categories
+          .filter((cat) => typeof cat.position === "number") // keep those with a position
+          .sort((a, b) => a.position - b.position) // smallest → largest
+          .map((cat) => (
+            <li key={cat.position}>
+              <Link
+                href={`/${cat.Title}`}
+                className="hover:text-gray-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {cat.Title}
+              </Link>
+            </li>
+          ))
       ) : (
         <li className="text-gray-400">No categories available</li>
       )}
@@ -74,15 +86,7 @@ export default function Navbar({ categories = [] }) {
           References
         </Link>
       </li>
-      <li>
-        <Link
-          href="/about"
-          className=" hover:text-gray-300"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          About
-        </Link>
-      </li>
+
       <li>
         <Link
           href="/contact"

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar"; // adjust path if needed
 import Footer from "@/components/Footer"; // import the Footer component
+import { Providers } from "./providers"; // ← import the client wrapper
+import Head from "next/head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,16 +29,22 @@ export default async function RootLayout({ children }) {
   );
   const json = await res.json();
   const categories = json.data;
-
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
-      >
-        <Navbar categories={categories} />
-        {/* Main content takes up remaining space */}
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <Head>
+        {/* Google Font preload/link */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@400;500&family=Geist+Mono&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <body className="antialiased min-h-screen flex flex-col font-geist-sans">
+        <Providers>
+          <Navbar categories={categories} />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
